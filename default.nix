@@ -87,10 +87,10 @@ pkgs.stdenv.mkDerivation rec {
     # Certificate #
     ###############
 
+    # Naming
     module=cert
-
-    mkdir $module
-    cd $module
+    mkdir "$TMPDIR/${temporary}/$module"
+    cd "$TMPDIR/${temporary}/$module"
 
     # Path to the certificate
     cert_path="$TMPDIR/certs/ssl/ca.pem"
@@ -108,7 +108,6 @@ pkgs.stdenv.mkDerivation rec {
     openssl x509 -noout -text -fingerprint -in "$new_cert" >> "$new_cert"
 
     # Scripts
-    ${pkgs.tree}/bin/tree $TMPDIR/assets/
     cp "$TMPDIR/assets/$module/"*.sh .
 
     # Create the prop file
@@ -124,14 +123,33 @@ pkgs.stdenv.mkDerivation rec {
     # Fonts #
     #########
 
-    # module=cert
+    # Naming
+    module=fonts
+    mkdir "$TMPDIR/${temporary}/$module"
+    cd "$TMPDIR/${temporary}/$module"
 
-    # mkdir $module
-    # cd $module
+    # Generate the folder structure
+    folders="system/fonts"
+    mkdir -p "$folders"
 
-    # # Generate the folder structure
-    # folders="system/fonts"
-    # mkdir -p "$folders"
+    # Copy the files over
+    fonts_path="$TMPDIR/fonts/truetype"
+
+    # Regular
+    cp "$fonts_path/"*"Regular.ttf" "$folders/Roboto-Regular.ttf"
+    cp "$fonts_path/"*"Regular.ttf" "$folders/RobotoFlex-Regular.ttf"
+    cp "$fonts_path/"*"Regular.ttf" "$folders/RobotoStatic-Regular.ttf"
+
+    # Serif
+    cp "$fonts_path/"*"-Regular.ttf" "$folders/NotoSerif-Regular.ttf"
+    cp "$fonts_path/"*"-Bold.ttf" "$folders/NotoSerif-Bold.ttf"
+    cp "$fonts_path/"*"-Italic.ttf" "$folders/NotoSerif-Italic.ttf"
+    cp "$fonts_path/"*"-BoldItalic.ttf" "$folders/NotoSerif-BoldItalic.ttf"
+
+    # Mono
+    cp "$fonts_path/"*"Regular.ttf" "$folders/DroidSansMono.ttf"
+    cp "$fonts_path/"*"Regular.ttf" "$folders/CutiveMono.ttf"
+    cp "$fonts_path/"*"Regular.ttf" "$folders/SourceSansPro-Regular.ttf"
 
     # Create the prop file
     cp "${
@@ -146,10 +164,42 @@ pkgs.stdenv.mkDerivation rec {
     # Sounds #
     ##########
 
+    # Naming
+    module=sounds
+    assets_name=zelda-sounds
+    mkdir "$TMPDIR/${temporary}/$module"
+    cd "$TMPDIR/${temporary}/$module"
+
+    # Generate the folder structure
+    folders="system/product/media/audio"
+    mkdir -p "$folders"/{notifications,alarms,ringtones}
+
+    # Copy the files over
+    fonts_path="$TMPDIR/assets/$assets_name"
+    cp "$fonts_path"/notifications/* "$folders/notifications/."
+    cp "$fonts_path"/other/* "$folders/alarms/."
+    cp "$fonts_path"/other/* "$folders/ringtones/."
+
+    # Scripts
+    cp "$TMPDIR/assets/$assets_name/"*.sh .
+
+    # Create the prop file
+    cp "${
+      createProp
+        "Majora's Sounds"
+        "sounds"
+        "Majora's Masks System Sounds"
+        version
+    }" "${magisk.prop}"
 
     ##################
     # Boot Animation #
     ##################
+
+    # Naming
+    module=anim
+    mkdir "$TMPDIR/${temporary}/$module"
+    cd "$TMPDIR/${temporary}/$module"
 
 
   '';
