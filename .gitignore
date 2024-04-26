@@ -1,2 +1,6 @@
+# Hidden bat ignore
 .*
 !.gitignore
+
+# The result folder
+result
