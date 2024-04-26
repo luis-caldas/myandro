@@ -7,6 +7,9 @@ let
   # Author
   author = "luis-caldas";
 
+  # Apps
+  apks = {};
+
   # The temporary folder for the directory structure
   temporary = "struct";
   sample = "sample";
@@ -201,6 +204,16 @@ pkgs.stdenv.mkDerivation rec {
     mkdir "$TMPDIR/${temporary}/$module"
     cd "$TMPDIR/${temporary}/$module"
 
+    # Copy the boot animation
+
+    # Create the prop file
+    cp "${
+      createProp
+        "Bootloader Animation"
+        "adnim"
+        "Custom Bootloader Animation"
+        version
+    }" "${magisk.prop}"
 
   '';
 
