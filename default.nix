@@ -23,6 +23,7 @@ let
     binary = "update-binary";
     script = "updater-script";
     prop = "module.prop";
+    md5 = "module.md5";
   };
 
   # Function to create a prop file
@@ -42,7 +43,7 @@ pkgs.stdenv.mkDerivation rec {
 
   # Information
   pname = "android-modules";
-  version = "1";
+  version = "2";
 
   # Get all the files that we will need
   srcs = [
@@ -70,6 +71,8 @@ pkgs.stdenv.mkDerivation rec {
     pkgs.openssl
     # Boot animation
     (pkgs.python3.withPackages (package: with package; [ wand ]))
+    # Hashing
+    pkgs.rhash
     # Zipping
     pkgs.p7zip
   ];
@@ -249,11 +252,13 @@ pkgs.stdenv.mkDerivation rec {
       # Add the needed files
       cp -r "$TMPDIR/${sample}"/* "$each_module/."
 
-      # TODO generate the MD5
+      # Go into the module folder
+      cd "$each_module"
+
+      # Hash all the files
+      rhash --exclude=md5 -p '%m  %p\n' -r . > ${magisk.md5}
 
       # Zip the folder
-      cd "$each_module"
-      #zip -r "$out/$module_name" .
       7z a -tzip -mx0 "$out/$module_name.zip" "$each_module"/* | grep archive
 
     done
