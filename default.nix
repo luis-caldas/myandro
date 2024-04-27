@@ -7,6 +7,9 @@ let
   # Author
   author = "luis-caldas";
 
+  # Phone
+  phone = "alioth";
+
   # Apps
   apks = {};
 
@@ -50,6 +53,9 @@ pkgs.stdenv.mkDerivation rec {
     # My Certificates
     (builtins.fetchGit { name = "certs"; url = "https://github.com/${author}/mypub"; })
 
+    # Boot animation creator
+    (builtins.fetchGit { name = "anim"; url = "https://github.com/${author}/boot-animation"; })
+
     # Font Files
     "${pkgs.courier-prime}/share/fonts"
 
@@ -60,9 +66,12 @@ pkgs.stdenv.mkDerivation rec {
 
   # Needed build packages
   nativeBuildInputs = [
+    # Certificate tools
     pkgs.openssl
+    # Boot animation
+    (pkgs.python3.withPackages (package: with package; [ wand ]))
+    # Zipping
     pkgs.p7zip
-    pkgs.zip
   ];
 
   # See all sources
@@ -204,13 +213,21 @@ pkgs.stdenv.mkDerivation rec {
     mkdir "$TMPDIR/${temporary}/$module"
     cd "$TMPDIR/${temporary}/$module"
 
-    # Copy the boot animation
+    # Compile the boot animation
+    python "$TMPDIR/$module/scaler.py" android | grep -i done
+
+    # Generate the folder structure
+    folders="system/product/media"
+    mkdir -p "$folders"
+
+    # Copy the result to structure
+    cp "$TMPDIR/$module/dist/android/${phone}/"*.zip "$folders/bootanimation.zip"
 
     # Create the prop file
     cp "${
       createProp
         "Bootloader Animation"
-        "adnim"
+        "anim"
         "Custom Bootloader Animation"
         version
     }" "${magisk.prop}"
@@ -229,8 +246,6 @@ pkgs.stdenv.mkDerivation rec {
       # Extract the name
       module_name="$(basename "$each_module")"
 
-      echo $module_name
-
       # Add the needed files
       cp -r "$TMPDIR/${sample}"/* "$each_module/."
 
@@ -239,14 +254,7 @@ pkgs.stdenv.mkDerivation rec {
       # Zip the folder
       cd "$each_module"
       #zip -r "$out/$module_name" .
-      7z a -tzip -mx0 "$out/$module_name.zip" "$each_module"/*
-
-    done
-
-    # Iterate the output and list contents
-    for each_zip in "$out"/*.zip; do
-
-      7z l "$each_zip"
+      7z a -tzip -mx0 "$out/$module_name.zip" "$each_module"/* | grep archive
 
     done
 
