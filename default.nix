@@ -146,25 +146,61 @@ pkgs.stdenv.mkDerivation rec {
     # Generate the folder structure
     folders="system/fonts"
     mkdir -p "$folders"
+    folders_product="system/product/fonts"
+    mkdir -p "$folders_product"
 
     # Copy the files over
     fonts_path="$TMPDIR/fonts/truetype"
 
-    # Regular
-    cp "$fonts_path/"*"Regular.ttf" "$folders/Roboto-Regular.ttf"
-    cp "$fonts_path/"*"Regular.ttf" "$folders/RobotoFlex-Regular.ttf"
-    cp "$fonts_path/"*"Regular.ttf" "$folders/RobotoStatic-Regular.ttf"
+    # Font information
+    extension="ttf"
+    possible=("Regular" "Bold" "Italic" "BoldItalic")
 
-    # Serif
-    cp "$fonts_path/"*"-Regular.ttf" "$folders/NotoSerif-Regular.ttf"
-    cp "$fonts_path/"*"-Bold.ttf" "$folders/NotoSerif-Bold.ttf"
-    cp "$fonts_path/"*"-Italic.ttf" "$folders/NotoSerif-Italic.ttf"
-    cp "$fonts_path/"*"-BoldItalic.ttf" "$folders/NotoSerif-BoldItalic.ttf"
+    # Direct
+    direct=(
+      "AndroidClock"
+      "ComingSoon"
+      "CutiveMono"
+      "DroidSans"
+      "DroidSansMono"
+    )
 
-    # Mono
-    cp "$fonts_path/"*"Regular.ttf" "$folders/DroidSansMono.ttf"
-    cp "$fonts_path/"*"Regular.ttf" "$folders/CutiveMono.ttf"
-    cp "$fonts_path/"*"Regular.ttf" "$folders/SourceSansPro-Regular.ttf"
+    # Product
+    product=(
+      "Lato"
+      "Rubik"
+    )
+
+    # All others
+    others=(
+      "Roboto" "RobotoFlex" "RobotoStatic"
+      "CarroisGothicSC"
+      "DancingScript"
+      "DroidSans"
+      "NotoSerif"
+      "SourceSansPro"
+    )
+
+    # Copy all the direct files
+    for each_font in "''${direct[@]}"; do
+      cp "$fonts_path/"*"-Regular.ttf" "$folders/$each_font.$extension"
+    done
+
+    # Copy all the other files
+    for each_font in "''${others[@]}"; do
+      # Iterate types
+      for each_type in "''${possible[@]}"; do
+        cp "$fonts_path/"*"-$each_type.ttf" "$folders/$each_font-$each_type.$extension"
+      done
+    done
+
+    # All the fonts in the product folder
+    for each_font in "''${product[@]}"; do
+      # Iterate types
+      for each_type in "''${possible[@]}"; do
+        cp "$fonts_path/"*"-$each_type.ttf" "$folders_product/$each_font-$each_type.$extension"
+      done
+    done
 
     # Create the prop file
     cp "${
