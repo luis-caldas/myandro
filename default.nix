@@ -55,7 +55,7 @@ pkgs.stdenv.mkDerivation rec {
     (builtins.fetchGit { name = "certs"; url = "https://github.com/${author}/mypub"; })
 
     # Boot animation creator
-    (builtins.fetchGit { name = "anim"; url = "https://github.com/${author}/boot-animation"; })
+    (builtins.fetchGit { name = "anim"; url = "https://github.com/${author}/mybootanim"; })
 
     # Font Files
     "${pkgs.courier-prime}/share/fonts"
