@@ -59,6 +59,7 @@ pkgs.stdenv.mkDerivation rec {
 
     # Font Files
     "${pkgs.courier-prime}/share/fonts"
+    "${pkgs.noto-fonts-emoji-blob-bin}/share/fonts/blobmoji"
 
     # Projects
     ./assets
@@ -151,6 +152,7 @@ pkgs.stdenv.mkDerivation rec {
 
     # Copy the files over
     fonts_path="$TMPDIR/fonts/truetype"
+    emoji_path="$TMPDIR/blobmoji"
 
     # Font information
     extension="ttf"
@@ -171,6 +173,13 @@ pkgs.stdenv.mkDerivation rec {
       "Rubik"
     )
 
+    # Emoji
+    emoji=(
+      "NotoColorEmoji"
+      "NotoColorEmojiFlags"
+      "NotoColorEmojiLegacy"
+    )
+
     # All others
     others=(
       "Roboto" "RobotoFlex" "RobotoStatic"
@@ -184,6 +193,11 @@ pkgs.stdenv.mkDerivation rec {
     # Copy all the direct files
     for each_font in "''${direct[@]}"; do
       cp "$fonts_path/"*"-Regular.ttf" "$folders/$each_font.$extension"
+    done
+
+    # Copy all emoji files
+    for each_font in "''${emoji[@]}"; do
+      cp "$emoji_path/"*".ttf" "$folders/$each_font.$extension"
     done
 
     # Copy all the other files
