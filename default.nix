@@ -30,8 +30,8 @@ let
   createProp = name: id: description: version: pkgs.writeText name ''
     id=${id}
     name=${name}
-    version=v${version}
-    versionCode=${version}
+    version=v${builtins.toString version}
+    versionCode=${builtins.toString version}
     author=${author}
     description=${description}
   '';
@@ -43,7 +43,7 @@ pkgs.stdenv.mkDerivation rec {
 
   # Information
   pname = "android-modules";
-  version = "2";
+  version = "1";
 
   # Get all the files that we will need
   srcs = [
@@ -56,6 +56,9 @@ pkgs.stdenv.mkDerivation rec {
 
     # Boot animation creator
     (builtins.fetchGit { name = "anim"; url = "https://github.com/${author}/mybootanim"; })
+
+    # My custom fonts
+    (builtins.fetchGit { name = "custom"; url = "https://github.com/${author}/myfonts"; })
 
     # Font Files
     "${pkgs.courier-prime}/share/fonts"
@@ -132,7 +135,7 @@ pkgs.stdenv.mkDerivation rec {
         "Certificate Authority"
         "cert"
         "Root Certificate Authority"
-        version
+        2
     }" "${magisk.prop}"
 
     #########
@@ -141,8 +144,13 @@ pkgs.stdenv.mkDerivation rec {
 
     # Naming
     module=fonts
-    mkdir "$TMPDIR/${temporary}/$module"
-    cd "$TMPDIR/${temporary}/$module"
+    temporary_folder="$TMPDIR/${temporary}/$module"
+    mkdir "$temporary_folder"
+    cd "$temporary_folder"
+
+    # Font information
+    extension="ttf"
+    possible=("Regular" "Bold" "Italic" "BoldItalic")
 
     # Generate the folder structure
     folders="system/fonts"
@@ -150,13 +158,24 @@ pkgs.stdenv.mkDerivation rec {
     folders_product="system/product/fonts"
     mkdir -p "$folders_product"
 
-    # Copy the files over
-    fonts_path="$TMPDIR/fonts/truetype"
-    emoji_path="$TMPDIR/blobmoji"
+    # Path for the original fonts
+    old_fonts_path="$TMPDIR/fonts/truetype"
+    symbols_path="$TMPDIR/custom/my-custom-fonts/Extra"
 
-    # Font information
-    extension="ttf"
-    possible=("Regular" "Bold" "Italic" "BoldItalic")
+    # Generate paths for new fonts
+    fonts_path="$TMPDIR/new"
+    mkdir -p "$fonts_path"
+
+    # Add the missing symbols to the main fonts
+    cd "$fonts_path"
+    for each in "''${possible[@]}"; do
+      "${pkgs.python3Packages.fonttools}/bin/fonttools" merge "$old_fonts_path"/*-"$each.$extension" "$symbols_path"/*-"$each.$extension" 2>/dev/null
+      mv merged".$extension" MergedNew-"$each.$extension"
+    done
+    cd "$temporary_folder"
+
+    # Paths for the fonts
+    emoji_path="$TMPDIR/blobmoji"
 
     # Direct
     direct=(
@@ -222,7 +241,7 @@ pkgs.stdenv.mkDerivation rec {
         "Good Fonts"
         "fonts"
         "Good Fonts Replacement"
-        version
+        3
     }" "${magisk.prop}"
 
     ##########
@@ -254,7 +273,7 @@ pkgs.stdenv.mkDerivation rec {
         "Majora's Sounds"
         "sounds"
         "Majora's Masks System Sounds"
-        version
+        2
     }" "${magisk.prop}"
 
     ##################
@@ -282,7 +301,7 @@ pkgs.stdenv.mkDerivation rec {
         "Bootloader Animation"
         "anim"
         "Custom Bootloader Animation"
-        version
+        2
     }" "${magisk.prop}"
 
   '';
