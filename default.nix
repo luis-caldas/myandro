@@ -62,7 +62,7 @@ pkgs.stdenv.mkDerivation rec {
 
     # Font Files
     "${pkgs.courier-prime}/share/fonts"
-    "${pkgs.noto-fonts-emoji-blob-bin}/share/fonts/blobmoji"
+    "${pkgs.noto-fonts-monochrome-emoji}/share/fonts/noto"
 
     # Projects
     ./assets
@@ -175,7 +175,7 @@ pkgs.stdenv.mkDerivation rec {
     cd "$temporary_folder"
 
     # Paths for the fonts
-    emoji_path="$TMPDIR/blobmoji"
+    emoji_path="$TMPDIR/noto"
 
     # Direct
     direct=(
@@ -194,6 +194,7 @@ pkgs.stdenv.mkDerivation rec {
 
     # Emoji
     emoji=(
+      "SamsungColorEmoji"
       "NotoColorEmoji"
       "NotoColorEmojiFlags"
       "NotoColorEmojiLegacy"
