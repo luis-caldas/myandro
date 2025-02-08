@@ -305,6 +305,27 @@ pkgs.stdenv.mkDerivation rec {
         2
     }" "${magisk.prop}"
 
+    #########
+    # Props #
+    #########
+
+    # Naming
+    module=props
+    mkdir "$TMPDIR/${temporary}/$module"
+    cd "$TMPDIR/${temporary}/$module"
+
+    # Copy the scripts
+    cp "$TMPDIR/assets/$module/"*.sh .
+
+    # Create the prop file
+    cp "${
+      createProp
+        "Clean Props"
+        "props"
+        "Removed LineageOS Entries"
+        1
+    }" "${magisk.prop}"
+
   '';
 
   # Zip Everything
