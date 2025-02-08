@@ -242,7 +242,7 @@ pkgs.stdenv.mkDerivation rec {
         "Good Fonts"
         "fonts"
         "Good Fonts Replacement"
-        3
+        4
     }" "${magisk.prop}"
 
     ##########
