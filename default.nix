@@ -62,7 +62,7 @@ pkgs.stdenv.mkDerivation rec {
 
     # Font Files
     "${pkgs.courier-prime}/share/fonts"
-    "${pkgs.noto-fonts-monochrome-emoji}/share/fonts/noto"
+    "${pkgs.noto-fonts-emoji}/share/fonts/noto"
 
     # Projects
     ./assets
@@ -242,7 +242,7 @@ pkgs.stdenv.mkDerivation rec {
         "Good Fonts"
         "fonts"
         "Good Fonts Replacement"
-        4
+        5
     }" "${magisk.prop}"
 
     ##########
