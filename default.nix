@@ -8,7 +8,7 @@ let
   author = "luis-caldas";
 
   # Phone
-  phone = "alioth";
+  phone = "shiba";
 
   # Apps
   apks = {};
@@ -62,7 +62,7 @@ pkgs.stdenv.mkDerivation rec {
 
     # Font Files
     "${pkgs.courier-prime}/share/fonts"
-    "${pkgs.noto-fonts-emoji}/share/fonts/noto"
+    "${pkgs.noto-fonts-color-emoji}/share/fonts/noto"
 
     # Projects
     ./assets
@@ -202,6 +202,7 @@ pkgs.stdenv.mkDerivation rec {
 
     # All others
     others=(
+      "GoogleSansFlex"
       "Roboto" "RobotoFlex" "RobotoStatic"
       "CarroisGothicSC"
       "DancingScript"
@@ -290,11 +291,14 @@ pkgs.stdenv.mkDerivation rec {
     python "$TMPDIR/$module/scaler.py" android | grep -i done
 
     # Generate the folder structure
-    folders="system/product/media"
-    mkdir -p "$folders"
+    folder_system="system/product/media"
+    mkdir -p "$folder_system"
+    folder_product="product/media"
+    mkdir -p "$folder_product"
 
     # Copy the result to structure
-    cp "$TMPDIR/$module/dist/android/${phone}/"*.zip "$folders/bootanimation.zip"
+    cp "$TMPDIR/$module/dist/android/${phone}/"*.zip "$folder_system/bootanimation.zip"
+    cp "$TMPDIR/$module/dist/android/${phone}/"*.zip "$folder_product/bootanimation.zip"
 
     # Create the prop file
     cp "${
