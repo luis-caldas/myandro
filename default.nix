@@ -310,7 +310,7 @@ pkgs.stdenv.mkDerivation rec {
         "Bootloader Animation"
         "anim"
         "Custom Bootloader Animation"
-        3
+        4
     }" "${magisk.prop}"
 
     #########
