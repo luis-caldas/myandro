@@ -244,7 +244,7 @@ pkgs.stdenv.mkDerivation rec {
         "Good Fonts"
         "fonts"
         "Good Fonts Replacement"
-        5
+        6
     }" "${magisk.prop}"
 
     ##########
@@ -301,13 +301,16 @@ pkgs.stdenv.mkDerivation rec {
     cp "$TMPDIR/$module/dist/android/${phone}/"*.zip "$folder_system/bootanimation.zip"
     cp "$TMPDIR/$module/dist/android/${phone}/"*.zip "$folder_product/bootanimation.zip"
 
+    # Copy script
+    cp "$TMPDIR/assets/$module/"*.sh .
+
     # Create the prop file
     cp "${
       createProp
         "Bootloader Animation"
         "anim"
         "Custom Bootloader Animation"
-        2
+        3
     }" "${magisk.prop}"
 
     #########
