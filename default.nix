@@ -188,6 +188,7 @@ pkgs.stdenv.mkDerivation rec {
 
     # Product
     product=(
+      "GoogleSansFlex"
       "Lato"
       "Rubik"
     )
