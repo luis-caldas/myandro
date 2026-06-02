@@ -62,10 +62,6 @@ pkgs.stdenv.mkDerivation rec {
     # Boot animation creator
     (builtins.fetchGit { name = "anim"; url = "https://github.com/${author}/mybootanim"; })
 
-    # Font Files
-    "${pkgs.corefonts}/share/fonts"
-    "${pkgs.noto-fonts-color-emoji}/share/fonts/noto"
-
     # Projects
     ./assets
 
@@ -161,7 +157,8 @@ pkgs.stdenv.mkDerivation rec {
     mkdir -p "$folders_product"
 
     # Path for the original fonts
-    old_fonts_path="$TMPDIR/fonts/truetype"
+    old_fonts_path="${pkgs.courier-prime}/share/fonts/truetype"
+    symbols_path="${pkgs.corefonts}/share/fonts/truetype"
 
     # Generate paths for new fonts
     fonts_path="$TMPDIR/new"
@@ -171,17 +168,21 @@ pkgs.stdenv.mkDerivation rec {
     cd "$fonts_path"
     for each in "''${possible[@]}"; do
       case "$each" in
-        Regular) old_font="$old_fonts_path/Courier_New.ttf" ;;
-        Bold) old_font="$old_fonts_path/Courier_New_Bold.ttf" ;;
-        Italic) old_font="$old_fonts_path/Courier_New_Italic.ttf" ;;
-        BoldItalic) old_font="$old_fonts_path/Courier_New_Bold_Italic.ttf" ;;
+        Regular) symbol_font="$symbols_path/Courier_New.ttf" ;;
+        Bold) symbol_font="$symbols_path/Courier_New_Bold.ttf" ;;
+        Italic) symbol_font="$symbols_path/Courier_New_Italic.ttf" ;;
+        BoldItalic) symbol_font="$symbols_path/Courier_New_Bold_Italic.ttf" ;;
       esac
-      cp "$old_font" "$fonts_path/MergedNew-$each.$extension"
+      "${pkgs.python3Packages.fonttools}/bin/fonttools" merge \
+        "$old_fonts_path"/*-"$each.$extension" \
+        "$symbol_font" \
+        2>/dev/null
+      mv merged".$extension" "MergedNew-$each.$extension"
     done
     cd "$temporary_folder"
 
     # Paths for the fonts
-    emoji_path="$TMPDIR/noto"
+    emoji_path="${pkgs.noto-fonts-color-emoji}/share/fonts/noto"
 
     # Direct
     direct=(
@@ -250,7 +251,7 @@ pkgs.stdenv.mkDerivation rec {
         "Good Fonts"
         "fonts"
         "Good Fonts Replacement"
-        6
+        7
     }" "${magisk.prop}"
 
     ##########
@@ -316,7 +317,7 @@ pkgs.stdenv.mkDerivation rec {
         "Bootloader Animation"
         "anim"
         "Custom Bootloader Animation"
-        4
+        5
     }" "${magisk.prop}"
 
     #########
