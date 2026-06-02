@@ -2,7 +2,12 @@
 let
 
   # Get the packages
-  pkgs = import <nixpkgs> {};
+  pkgs = import <nixpkgs> {
+    config.allowUnfreePredicate = pkg:
+      builtins.elem pkg.pname [
+        "corefonts"
+      ];
+  };
 
   # Author
   author = "luis-caldas";
@@ -57,11 +62,8 @@ pkgs.stdenv.mkDerivation rec {
     # Boot animation creator
     (builtins.fetchGit { name = "anim"; url = "https://github.com/${author}/mybootanim"; })
 
-    # My custom fonts
-    (builtins.fetchGit { name = "custom"; url = "https://github.com/${author}/myfonts"; })
-
     # Font Files
-    "${pkgs.courier-prime}/share/fonts"
+    "${pkgs.corefonts}/share/fonts"
     "${pkgs.noto-fonts-color-emoji}/share/fonts/noto"
 
     # Projects
@@ -160,7 +162,6 @@ pkgs.stdenv.mkDerivation rec {
 
     # Path for the original fonts
     old_fonts_path="$TMPDIR/fonts/truetype"
-    symbols_path="$TMPDIR/custom/my-custom-fonts/Extra"
 
     # Generate paths for new fonts
     fonts_path="$TMPDIR/new"
@@ -169,8 +170,13 @@ pkgs.stdenv.mkDerivation rec {
     # Add the missing symbols to the main fonts
     cd "$fonts_path"
     for each in "''${possible[@]}"; do
-      "${pkgs.python3Packages.fonttools}/bin/fonttools" merge "$old_fonts_path"/*-"$each.$extension" "$symbols_path"/*-"$each.$extension" 2>/dev/null
-      mv merged".$extension" MergedNew-"$each.$extension"
+      case "$each" in
+        Regular) old_font="$old_fonts_path/Courier_New.ttf" ;;
+        Bold) old_font="$old_fonts_path/Courier_New_Bold.ttf" ;;
+        Italic) old_font="$old_fonts_path/Courier_New_Italic.ttf" ;;
+        BoldItalic) old_font="$old_fonts_path/Courier_New_Bold_Italic.ttf" ;;
+      esac
+      cp "$old_font" "$fonts_path/MergedNew-$each.$extension"
     done
     cd "$temporary_folder"
 
