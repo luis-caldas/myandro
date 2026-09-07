@@ -15,7 +15,7 @@ jobs:
       - name: Setup Nix
         uses: cachix/install-nix-action@v27
         with:
-          nix_path: nixpkgs=channel:nixos-24.05
+          nix_path: nixpkgs=channel:nixos-26.05
 
       - name: Build It
         run: nix-build
