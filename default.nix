@@ -301,12 +301,13 @@ pkgs.stdenv.mkDerivation rec {
     # Generate the folder structure
     folder_system="system/product/media"
     mkdir -p "$folder_system"
-    folder_product="product/media"
-    mkdir -p "$folder_product"
+
+    # Helper
+    bootanim="$TMPDIR/$module/dist/android/${phone}/bootanimation.zip"
 
     # Copy the result to structure
-    cp "$TMPDIR/$module/dist/android/${phone}/"*.zip "$folder_system/bootanimation.zip"
-    cp "$TMPDIR/$module/dist/android/${phone}/"*.zip "$folder_product/bootanimation.zip"
+    cp "$bootanim" "$folder_system/bootanimation.zip"
+    cp "$bootanim" "$folder_system/bootanimation-dark.zip"
 
     # Copy script
     cp "$TMPDIR/assets/$module/"*.sh .
@@ -317,7 +318,7 @@ pkgs.stdenv.mkDerivation rec {
         "Bootloader Animation"
         "anim"
         "Custom Bootloader Animation"
-        5
+        6
     }" "${magisk.prop}"
 
     #########
