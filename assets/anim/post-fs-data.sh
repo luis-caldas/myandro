@@ -1,27 +1,26 @@
 #!/system/bin/sh
 
-# Module location
 MODDIR=${0%/*}
-
-# Targets
 SRC="$MODDIR/system/product/media/bootanimation.zip"
-DST="/product/media/bootanimation.zip"
 
-# Have we our own file
 [ -f "$SRC" ] || exit 0
 
-# Safely wait for our target
-i=0
-while [ $i -lt 10 ]; do
-  [ -d /product/media ] && break
-  i=$((i+1))
-  sleep 1
+# Bind over every bootanimation location that actually exists.
+for DST in \
+    /apex/com.android.bootanimation/etc/bootanimation.zip \
+    /product/media/bootanimation.zip \
+    /product/media/bootanimation-dark.zip \
+    /system/product/media/bootanimation.zip \
+    /system/product/media/bootanimation-dark.zip \
+    /system/media/bootanimation.zip \
+    /oem/media/bootanimation.zip
+do
+    [ -e "$DST" ] || continue
+
+    CTX="$(ls -Z "$DST" 2>/dev/null | awk '{print $1}')"
+    [ -n "$CTX" ] && chcon "$CTX" "$SRC" 2>/dev/null
+
+    mount --bind "$SRC" "$DST" 2>/dev/null
 done
-
-# If not here yet we exit
-[ -d /product/media ] || exit 0
-
-# Bind our source to the target
-mount -o bind "$SRC" "$DST" 2>/dev/null || true
 
 exit 0

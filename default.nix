@@ -312,13 +312,16 @@ pkgs.stdenv.mkDerivation rec {
     # Copy script
     cp "$TMPDIR/assets/$module/"*.sh .
 
+    # Boot animation is bind mounted by post-fs-data.sh
+    touch skip_mount
+
     # Create the prop file
     cp "${
       createProp
         "Bootloader Animation"
         "anim"
         "Custom Bootloader Animation"
-        6
+        7
     }" "${magisk.prop}"
 
     #########
