@@ -298,18 +298,11 @@ pkgs.stdenv.mkDerivation rec {
     # Compile the boot animation
     python "$TMPDIR/$module/scaler.py" android | grep -i done
 
-    # Generate the folder structure
-    folder_system="system/product/media"
-    mkdir -p "$folder_system"
-
-    # Helper
+    # Keep the animation itself outside the Magic Mount tree.
     bootanim="$TMPDIR/$module/dist/android/${phone}/bootanimation.zip"
+    cp "$bootanim" ./bootanimation.zip
 
-    # Copy the result to structure
-    cp "$bootanim" "$folder_system/bootanimation.zip"
-    cp "$bootanim" "$folder_system/bootanimation-dark.zip"
-
-    # Copy script
+    # Boot script
     cp "$TMPDIR/assets/$module/"*.sh .
 
     # Boot animation is bind mounted by post-fs-data.sh
@@ -321,7 +314,7 @@ pkgs.stdenv.mkDerivation rec {
         "Bootloader Animation"
         "anim"
         "Custom Bootloader Animation"
-        7
+        8
     }" "${magisk.prop}"
 
     #########
